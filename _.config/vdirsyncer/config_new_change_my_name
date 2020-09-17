@@ -1,0 +1,18 @@
+[general]
+status_path = "~/.config/vdirsyncer/status/"
+
+[pair calendar]
+a = "google_calendar"
+b = "local_calendar"
+collections = ["change_my_name"]
+metadata = ["color"]
+
+[storage local_calendar]
+type = "singlefile"
+path = "~/.config/orage/calendars/%s.ics"
+
+[storage google_calendar]
+type = "google_calendar"
+token_file = "~/.config/vdirsyncer/google_token"
+client_id = "id"
+client_secret = "id"

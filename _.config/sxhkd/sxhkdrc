@@ -1,0 +1,375 @@
+﻿######################################################################
+#                                                                    #
+#  Both global and WM specific key bindings are to be defined in     #
+#  this file. Do not add any bindings through xfce keyboard          #
+#  settings. This would cause conflict and only xfce bindings would  #  
+#  work.                                                             #
+#                                                                    #
+#  Remember that lines that have key config and command hashed are   #
+#  inactive and will not work.                                       #
+#                                                                    #
+#  If on Mousepad change to Document > Filetype > Script > sh        #
+#  for better readability.                                           #
+#                                                                    #
+#  To find out names of available keys, e.g. some media keys,        #
+#  run command "xmodmap -pk". It should be possible to assign        #
+#  bindings to mod keys on specific sides but that has not been      #
+#  tested.                                                           #
+#                                                                    #
+#  For some keynames case matters!                                   #
+#--------------------------------------------------------------------#
+#  Some general conventions worth following:                         #
+#  * commonly used window key bindings: super + key                  #
+#  * special window key bindings: super + shift + key                #
+#  * desktop navigation and operations: super + ctrl + key           #
+#                                                                    #
+######################################################################
+
+
+######################################################################
+#                        Global key bindings                         #
+######################################################################
+
+
+# Application launching
+# _____________
+
+## Bring Albert on/off screen
+super + a
+	albert toggle; bspc node marked -a; bspc node -g marked=off
+
+## Bring Whiskermenu on/off screen
+super + s
+	xfce4-popup-whiskermenu
+
+## Open terminal window
+super + Return
+	exo-open --launch TerminalEmulator
+
+## Open web browser
+super + F1
+	exo-open --launch WebBrowser
+
+## Open file manager
+super + F2
+	exo-open --launch FileManager
+
+## Open mail reader
+super + F3
+	exo-open --launch MailReader
+
+## Launching Helper.md
+super + F11
+	mousepad ${HOME}/.config/Helper.md	
+
+
+# Screenshotting
+# _____________
+
+## Make a screenshot with dialog window
+Print
+	xfce4-screenshooter
+
+## Make a screenshot of entire screen and copy to clipboard
+Print + ctrl
+	xfce4-screenshooter -cf
+
+## Make a screenshot of a region and copy to clipboard
+Print + shift
+	xfce4-screenshooter -rc
+
+
+# Settings launching and switching
+# _____________
+
+## Launch display settings
+super + p
+	xfce4-display-settings --minimal
+
+## Open this file in mousepad
+super + F12
+	mousepad ${HOME}/.config/sxhkd/sxhkdrc
+
+## Turn on/off compositing by picom
+super + ctrl + space
+	{pkill picom ,\
+	picom -b --experimental-backends }
+
+## Make sxhkd reload its configuration files
+super + shift + Escape
+	pkill -USR1 -x sxhkd
+
+
+# Media keys (some keyboards have those, often availble through "fn" button)
+# ______________
+
+XF86AudioRaiseVolume
+	pulseaudio-ctl up
+
+XF86AudioLowerVolume
+	pulseaudio-ctl down
+
+XF86AudioMute
+	pulseaudio-ctl mute
+
+XF86AudioMicMute
+	pulseaudio-ctl mute-input
+
+XF86AudioPlay
+	playerctl play
+
+XF86AudioPause
+	playerctl pause
+
+XF86AudioNext
+	playerctl next
+
+XF86AudioPrev
+	playerctl previous
+	
+XF86MonBrightnessDown
+	brightnessctl s 10-
+
+XF86MonBrightnessUp
+	brightnessctl s +10
+
+XF86Sleep
+	systemctl suspend
+
+XF86WWW
+	exo-open --launch WebBrowser
+
+XF86Explorer
+	exo-open --launch FileManager ${HOME}
+
+XF86Documents
+	exo-open --launch FileManager ${HOME}/Documents
+
+# This one command might not work at all, had no way to test it while writing
+XF86Bluetooth
+	bluetooth
+
+XF86Mail
+	exo-open --launch MailReader
+
+XF86Calculator
+	galculator
+
+Help
+	exo-open --launch FileManager ${HOME}/.config/Helper.md
+
+XF86ScreenSaver
+	xflock4
+
+XF86TaskPane
+	alacritty -e htop
+
+XF86AudioPreset
+	pulseaudio-ctl set 50
+
+XF86Display
+	xfce4-display-settings --minimal
+
+XF86Messenger
+	pidgin
+
+XF86Game
+	lutris
+
+
+
+######################################################################
+#                         BSPWM key bindings                         #
+######################################################################
+
+
+# Single window manipulation
+# ______________
+
+## Close window
+super + q
+	bspc node --close
+
+## Close window (alternate)
+alt + F4
+	bspc node --close
+
+## Kill window
+super + shift + k
+	bspc  node -k
+
+## Toggle tiling mode of window
+super + t
+	bspc node -t {tiled,pseudo_tiled}
+
+## Toggle tiling/floating
+super + w
+	bspc node -t {floating,tiled}
+	
+## Toggle fullscreen
+super + f 
+	bspc node -t {fullscreen,tiled}	
+
+## Make window sticky 
+super + shift + s
+	bspc node -g sticky
+
+## Lock a window from closing
+super + shift + x
+	bspc node -g locked 
+
+## Try to keep size and position of the selected window
+super + o
+	bspc node -g private
+
+## Insert receptacle (empty tile for window)
+super + d
+	bspc node -i
+
+## Hide window
+super + e
+	bspc node -g hidden
+
+
+# Global windows manipulation
+# ______________
+
+## Force all windows of the desktop to float    #The command needs fixing!
+super + ctrl + w
+	for i in $(bspc query -N -d focused); do bspc node $i -t floating; done
+
+## Force all windows of the desktop to tile     #The command needs fixing!
+super + ctrl + shift + w
+	for i in $(bspc query -N -d focused); do bspc node $i -t tiled; done
+
+## Remove all receptacles (empty tiles)
+super + ctrl + d
+	for i in $(bspc query -N -n .leaf.!window.local); do bspc node $i -k; done
+
+
+# Window moving and splitting
+# ______________    
+	
+## Preselect window for splitting in certain direction
+super + alt + {a,s,w,d}
+	bspc node -p \~{west,south,north,east} -i
+
+## Preselect window for splitting in certain direction
+super + alt + {Left,Down,Up,Right}
+	bspc node -p \~{west,south,north,east}
+
+## Create a new "master area", splitting the whole desktop instead of just windows.
+super + shift + a
+	bspc node -n @/
+	
+## Go to desktop or move focused to desktop if shift is pressed
+super + {_,shift + }{1-9,0}
+	bspc {desktop -f,node -d} ^{1-9,10}
+
+## Swap focused window with neighbouing window
+super + shift + {Left,Down,Up,Right}
+	bspc node -s {west,south,north,east}
+
+
+# Window resizing
+# _____________
+
+## Resize focused window
+super + {bracketleft,bracketright}
+	~/.config/bspwm/bspwm-resize.sh {contract,expand} 10
+
+
+# Window selecting and juggling
+# _____________
+
+## Select window on the specified side of currently focused one
+super + {Left,Down,Up,Right}
+	bspc node -f {west,south,north,east}
+
+## Circulate the leaves of the tree
+super + shift + c
+	bspc node @/ --circulate forward
+
+## Swap the current node and the biggest node
+super + z
+	bspc node -s biggest
+
+## Cycle through windows
+alt + {_,shift + }Tab
+    bspc node -f {next,prev}
+
+
+# Desktop navigating
+# _____________
+
+## Select previous / next desktop
+super + {m,n}
+	bspc desktop -f {prev, next} 
+
+## Select previous / next desktop that has windows opened
+super + ctrl + {Left, Right}
+	bspc desktop -f {prev.occupied,next.occupied} 
+
+super + ctrl + {Up, Down}
+	bspc desktop -f {prev.occupied,next.occupied} 
+
+
+# Layout manipulation/desktop level controls
+# ______________
+
+## Toggle monocle mode
+super + l 
+	bspc desktop -l next
+	
+## Balance tree
+super + b
+	bspc node @/ -B
+
+## Balance brother node. If you do this on biggest window of the desktop, it usually means balancing all windows with except the biggest.  # Not sure actually what this does, it was there in deafault Manjaro BSPWM config, fill free to unbind it
+super + alt + b
+	bspc node @brother -B
+	
+## Undo balancing (equalize windows)
+super + shift + b
+	bspc node @/ -E
+
+## Mirror and flip leaves of tree
+super + {comma,period}
+	bspc node @/ -F {horizontal,vertical}
+	
+## Rotate leaves of tree
+super + shift + {comma,period}
+	bspc node @/ -R {90,270}
+
+## Change window gap
+super + button{4,5}
+	bspc config -d focused window_gap $((`bspc config -d focused window_gap` {+,-} 2 ))
+
+
+# Mouse bindings
+# ______________
+
+
+# Touchpad "gestures" (depend on touchpad driver, very likely to be unavailable)
+# ______________
+
+## Three finger swipe (left or right) to change desktop
+@button{10,11}
+	bspc desktop -f {prev,next}    
+
+## Three finger swipe (up)
+@button8
+	albert toggle
+
+# Other utilities
+# ______________
+
+## Cleanly quit bspwm
+super + shift + ctrl + q
+	bspc quit 
+
+## To open bspwm program in case bspwmrc fails to execute/you want to restart it
+super + shift + r
+	bspwmrc
+
+
